@@ -7,7 +7,7 @@ import click
 from dotenv import load_dotenv
 from prometheus_client import start_http_server
 
-from app.metrics_android import collect_android_metrics
+from app.metrics_android import AndroidMetricsCollector
 from app.metrics_ios import collect_ios_metrics
 from infra.settings import Settings
 
@@ -31,17 +31,22 @@ def run_local():
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
 
+    android_collector = None
+    if settings.enable_android:
+        android_collector = AndroidMetricsCollector(settings)
+
     while True:
         try:
             print("Starting polling loop...")
-            if settings.enable_android:
-                collect_android_metrics()
+            if settings.enable_android and android_collector:
+                android_metrics = android_collector.collect_system_core_baselines()
+                # Map parsed results to Prometheus Client Gauge metrics
+                pass
+
             if settings.enable_ios:
                 collect_ios_metrics()
+
             print("Polling loop completed. Sleeping for {settings.poll_interval_seconds} seconds.")
             time.sleep(settings.poll_interval_seconds)
         except Exception as e:
             print(f"An error occurred: {e}")
-
-if __name__ == '__main__':
-    cli()

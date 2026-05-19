@@ -1,0 +1,5 @@
+prometheus-client>=0.20.0
+pymobiledevice3>=7.5.0
+pydantic-settings>=2.2.0
+click>=8.1.0
+python-dotenv>=1.0.1
