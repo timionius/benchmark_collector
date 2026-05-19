@@ -3,7 +3,6 @@ from typing import Optional
 
 import pymobiledevice3.lockdown
 from pymobiledevice3.services.diagnostics import DiagnosticsService
-from pymobiledevice3.services.device_info import DeviceInfo
 
 logger = logging.getLogger(__name__)
 
@@ -12,13 +11,11 @@ class IOSMetricsCollector:
         self.settings = settings
         self.lockdownd_client = None
         self.diagnostics_service = None
-        self.device_info = None
 
     def initialize_device(self):
         try:
             self.lockdownd_client = pymobiledevice3.lockdown.LockdownClient()
             self.diagnostics_service = DiagnosticsService(self.lockdownd_client)
-            self.device_info = DeviceInfo(self.lockdownd_client)
         except Exception as e:
             logger.error(f"Failed to initialize iOS device: {e}")
             return False
@@ -29,8 +26,8 @@ class IOSMetricsCollector:
             return {}
 
         try:
-            cpu_usage = self.device_info.cpuUsage()
-            memory_allocations = self.device_info.memoryAllocations()
+            cpu_usage = self.diagnostics_service.getSystemCPUUsage()
+            memory_allocations = self.diagnostics_service.getMemoryAllocations()
             return {
                 'cpu_usage': cpu_usage,
                 'memory_allocations': memory_allocations
@@ -47,8 +44,8 @@ class IOSMetricsCollector:
             if bundle_id:
                 app_info = self.diagnostics_service.getAppInfo(bundle_id)
                 return {
-                    'app_name': app_info['CFBundleName'],
-                    'app_version': app_info['CFBundleVersion']
+                    'app_name': app_info.get('CFBundleName', ''),
+                    'app_version': app_info.get('CFBundleVersion', '')
                 }
             else:
                 # Fallback metric baseline if detailed application isolation is blocked
@@ -65,9 +62,9 @@ class IOSMetricsCollector:
 
         try:
             battery_info = self.diagnostics_service.getBatteryInfo()
-            thermal_state = self.device_info.thermalState()
+            thermal_state = self.diagnostics_service.getThermalState()
             return {
-                'battery_current_draw': battery_info['CurrentCapacity'],
+                'battery_current_draw': battery_info.get('CurrentCapacity', 0),
                 'thermal_state': thermal_state
             }
         except Exception as e:

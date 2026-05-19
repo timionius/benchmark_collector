@@ -8,8 +8,8 @@ from dotenv import load_dotenv
 from prometheus_client import start_http_server
 
 from app.metrics_android import AndroidMetricsCollector
-from app.metrics_ios import IOSMetricsCollector, collect_ios_metrics
-from infra.settings import Settings
+from app.metrics_ios import IOSMetricsCollector
+from app.settings import Settings
 
 def signal_handler(sig, frame):
     print("Received signal to stop the engine gracefully.")
@@ -55,9 +55,6 @@ def run_local():
 
                 # Map parsed results to Prometheus Client Gauge metrics
                 pass
-
-            if settings.enable_ios:
-                collect_ios_metrics(ios_metrics, ios_app_specific_footprint, ios_thermal_and_battery_stress)
 
             print("Polling loop completed. Sleeping for {settings.poll_interval_seconds} seconds.")
             time.sleep(settings.poll_interval_seconds)
