@@ -1,0 +1,19 @@
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# Environment Variables
+.env
+
+# Python Caching
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Local Operating System Files
+.DS_Store
+Thumbs.db
+
+.aider.chat.history.md
