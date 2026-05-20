@@ -27,7 +27,7 @@ A lightweight performance monitoring tool for Android system resource utilizatio
 - Python 3.12
 - ADB (Android Debug Bridge) installed and configured
 - Android device with USB debugging enabled
-- Podman or Docker (Podman recommended, Docker supported but not tested)
+- Ready to use Podman virtual machine (Podman recommended, Docker supported but not tested)
 
 ## Installation
 
@@ -70,6 +70,9 @@ pip install -r requirements.txt
 
 1. **Start the monitoring stack**
    ```bash
+   podman machine list
+   # check podman VM is running, list command should show you running VMs
+
    cd infra
    podman-compose up -d
    ```
@@ -89,16 +92,6 @@ pip install -r requirements.txt
 4. **View metrics at**
    - Prometheus: http://localhost:9090
    - Metrics endpoint: http://localhost:8000/metrics
-
-## Configuration
-
-### Environment Variables
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `COLLECTION_INTERVAL` | 5 | Collection interval in seconds |
-| `PROMETHEUS_PORT` | 8000 | Port for metrics exporter |
-| `LOG_LEVEL` | INFO | Logging level (DEBUG, INFO, WARNING, ERROR) |
 
 ## Grafana Dashboard
 
