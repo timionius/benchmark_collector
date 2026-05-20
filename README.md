@@ -1,6 +1,8 @@
 # Benchmark Collector
 
 A lightweight performance monitoring tool for Android system resource utilization, designed for benchmark testing and continuous performance analysis.
+<img width="1259" height="396" alt="default_dashboard" src="https://github.com/user-attachments/assets/d86cdfdb-3751-47cd-b8f9-cfbbda59ef11" />
+
 
 ## Features
 
