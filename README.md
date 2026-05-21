@@ -1,7 +1,7 @@
 # Benchmark Collector
 
 A lightweight, dual-platform performance monitoring tool for **Android** and **iOS** system resource utilization, designed for benchmark testing and continuous performance analysis. It exports metrics in a Prometheus-compatible format for easy visualization with Grafana.
-<img width="1259" height="396" alt="default_dashboard" src="https://github.com/user-attachments/assets/d86cdfdb-3751-47cd-b8f9-cfbbda59ef11" />
+<img width="1250" height="641" alt="Screenshot 2026-05-21 at 13 53 25" src="https://github.com/user-attachments/assets/63add489-1f74-4a88-867f-f7674b7bd542" />
 
 ## Features
 
@@ -34,23 +34,23 @@ A lightweight, dual-platform performance monitoring tool for **Android** and **i
 
 ### 1. Clone the repository
 
-\```bash
+```bash
 git clone https://github.com/timionius/benchmark_collector.git
 cd benchmark_collector
-\```
+```
 
 ### 2. Set up Python virtual environment
 
-\```bash
+```bash
 python3.12 -m venv .venv
 source .venv/bin/activate
-\```
+```
 
 ### 3. Install dependencies
 
-\```bash
+```bash
 pip install -r requirements.txt
-\```
+```
 
 ## Usage
 
@@ -59,44 +59,44 @@ pip install -r requirements.txt
 #### Android
 
 1.  **Connect your Android device**:
-    \```bash
+    ```bash
     adb devices
     # Ensure your device is listed as "device"
-    \```
+    ```
 
 2.  **Run the collector**:
-    \```bash
+    ```bash
     python app/collect_android.py
-    \```
+    ```
 
 #### iOS
 
 1.  **Start the `remoted` tunneling service (Required)**:
     This command creates a bridge for communication with the iOS device. It requires `sudo` and will run in the foreground.
-    \```bash
+    ```bash
     sudo pymobiledevice3 remote tunneld
-    \```
+    ```
     *Keep this terminal window open and running.*
 
 2.  **In a new terminal, run the iOS collector**:
-    \```bash
+    ```bash
     python app/collect_ios.py
-    \```
+    ```
 
 ### With Prometheus and Grafana (Recommended)
 
 1.  **Start the monitoring stack**:
-    \```bash
+    ```bash
     cd infra
     podman-compose up -d
-    \```
+    ```
     *Note: If using Docker, run `docker-compose up -d` (not tested).*
 
 2.  **Run the collector with the Prometheus endpoint**:
     - **Android**:
-        \```bash
+        ```bash
         python app/collect_android.py
-        \```
+        ```
     - **iOS**:
         - **Terminal 1**: `sudo pymobiledevice3 remote tunneld`
         - **Terminal 2**: `python app/collect_ios.py`
