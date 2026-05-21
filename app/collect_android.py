@@ -14,6 +14,8 @@ GPU_BUSY = Gauge('android_gpu_busy_percent', 'Current GPU load percentage')
 DISK_READ_SPEED = Gauge('android_disk_read_kb_per_sec', 'Disk read speed in KB/s')
 DISK_WRITE_SPEED = Gauge('android_disk_write_kb_per_sec', 'Disk write speed in KB/s')
 
+should_run = True
+
 class AndroidMetricsCollector:
     def __init__(self):
         pass
@@ -25,12 +27,45 @@ class AndroidMetricsCollector:
         self.collect_disk_io()
 
     def collect_system_core_baselines(self):
-        try:
-            result = subprocess.run(['adb', 'shell', 'top', '-n', '1', '-b'], capture_output=True, text=True, timeout=3)
-            if result.returncode == 0:
-                self.parse_top_output(result.stdout)
-        except Exception as e:
-            print(f"Error checking CPU/RAM: {e}")
+            global should_run
+            try:
+                result = subprocess.run(['adb', 'shell', 'top', '-n', '1', '-b'], capture_output=True, text=True, timeout=3)
+                if result.returncode == 0:
+                    self.parse_top_output(result.stdout)
+                else:
+                     # Handle non-zero return code (error == 1 or other error codes)
+                     print(f"ADB command failed with return code: {result.returncode}")
+                     print(f"stderr: {result.stderr}")
+                     print("\n" + "="*80)
+                     print("⚠️  ADB COMMAND FAILED")
+                     print("="*80)
+                     print("\nPlease run this command manually to check ADB/device health:")
+                     print("  adb shell top -n 1 -b")
+                     print("\nPossible issues:")
+                     print("  • Device is not connected")
+                     print("  • ADB doesn't have proper permissions")
+                     print("  • Multiple devices connected (use: adb devices)")
+                     print("  • Device is not authorized for debugging")
+                     print("  • Device is offline")
+                     print("\nAfter fixing the issue, restart the script.")
+                     print("="*80 + "\n")
+                     should_run = False
+            except subprocess.TimeoutExpired:
+                print("\n" + "="*80)
+                print("⚠️  ADB COMMAND TIMEOUT DETECTED")
+                print("="*80)
+                print("\nThe command 'adb shell top -n 1 -b' timed out after 3 seconds.")
+                print("\nPlease run this command manually to check ADB/device health:")
+                print("  adb shell time top -n 1 -b")
+                print("\nPossible issues:")
+                print("  • Device is unresponsive or disconnected")
+                print("  • ADB connection is slow (try using USB instead of wireless)")
+                print("  • Device is under extremely heavy load")
+                print("\nAfter fixing the issue, restart the script.")
+                print("="*80 + "\n")
+                should_run = False
+            except Exception as e:
+                print(f"Error checking CPU/RAM: {e}")
 
     def parse_top_output(self, output: str):
         lines = output.split('\n')
@@ -102,7 +137,7 @@ if __name__ == '__main__':
     print("Prometheus Android exporter running on port :8000...")
     
     collector = AndroidMetricsCollector()
-    while True:
+    while should_run:
         collector.collect_all_metrics()
         time.sleep(0.5)  # Scraper resolution step interval
 

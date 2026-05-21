@@ -5,14 +5,69 @@
   "editable": true,
   "graphTooltip": 0,
   "time": {
-    "from": "now-6h",
+    "from": "now-5m",
     "to": "now"
   },
-  "timepicker": {},
+  "timepicker": {
+    "refresh_intervals": [
+      "1s",
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h"
+    ]
+  },
   "fiscalYearStartMonth": 0,
   "liveNow": false,
   "weekStart": "",
-  "refresh": "",
+  "refresh": "1s",
+  "templating": {
+    "list": [
+      {
+        "name": "platform",
+        "type": "custom",
+        "label": "Platform",
+        "current": {
+          "selected": true,
+          "text": "iOS",
+          "value": "ios"
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "iOS",
+            "value": "ios"
+          },
+          {
+            "selected": false,
+            "text": "Android",
+            "value": "android"
+          }
+        ],
+        "query": "ios,android",
+        "multi": false,
+        "includeAll": false,
+        "hide": 0
+      },
+      {
+        "name": "cpu_cores",
+        "type": "textbox",
+        "label": "CPU Cores",
+        "current": {
+          "selected": true,
+          "text": "6",
+          "value": "6"
+        },
+        "query": "6,8",
+        "placeholder": "Enter number of CPU cores (e.g., 4, 6, 8, 12)",
+        "hide": 0
+      }
+    ]
+  },
   "annotations": {
     "list": [
       {
@@ -31,26 +86,29 @@
   "panels": [
     {
       "id": 1,
-      "title": "CPU",
+      "title": "CPU - $platform ($cpu_cores cores)",
       "type": "timeseries",
       "datasource": {
         "uid": "PBFA97CFB590B2093"
       },
       "gridPos": {
         "h": 7,
-        "w": 13,
+        "w": 12,
         "x": 0,
         "y": 0
       },
+      "repeat": "platform",
+      "repeatDirection": "h",
+      "maxPerRow": 2,
       "targets": [
         {
           "datasource": {
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "android_cpu_utilization_percent / 8",
+          "expr": "${platform}_cpu_utilization_percent / $cpu_cores",
           "interval": "1s",
-          "legendFormat": "__auto",
+          "legendFormat": "${platform}",
           "range": true,
           "refId": "A"
         }
@@ -126,26 +184,29 @@
     },
     {
       "id": 2,
-      "title": "RAM free (MB)",
+      "title": "RAM free (GB) - $platform",
       "type": "timeseries",
       "datasource": {
         "uid": "PBFA97CFB590B2093"
       },
       "gridPos": {
         "h": 7,
-        "w": 11,
-        "x": 13,
-        "y": 0
+        "w": 12,
+        "x": 0,
+        "y": 7
       },
+      "repeat": "platform",
+      "repeatDirection": "h",
+      "maxPerRow": 2,
       "targets": [
         {
           "datasource": {
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "android_ram_free_bytes / (1024 * 1024 * 1024)",
+          "expr": "${platform}_ram_free_bytes / (1024 * 1024 * 1024)",
           "interval": "1s",
-          "legendFormat": "__auto",
+          "legendFormat": "${platform}",
           "range": true,
           "refId": "A"
         }
@@ -201,7 +262,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "bytes"
         },
         "overrides": []
       },

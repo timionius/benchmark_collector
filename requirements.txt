@@ -1,1 +1,2 @@
 prometheus_client==0.25.0
+pymobiledevice3==9.12.3
