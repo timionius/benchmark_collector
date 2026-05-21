@@ -184,7 +184,7 @@
     },
     {
       "id": 2,
-      "title": "RAM free (GB) - $platform",
+      "title": "RAM free - $platform",
       "type": "timeseries",
       "datasource": {
         "uid": "PBFA97CFB590B2093"
@@ -204,7 +204,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "${platform}_ram_free_bytes / (1024 * 1024 * 1024)",
+          "expr": "${platform}_ram_free_bytes / (1024 * 1024)",
           "interval": "1s",
           "legendFormat": "${platform}",
           "range": true,
@@ -263,7 +263,7 @@
               }
             ]
           },
-          "unit": "bytes"
+          "unit": "mbytes"
         },
         "overrides": []
       },
